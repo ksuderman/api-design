@@ -1,0 +1,74 @@
+\begin{longtable}{| r | l | l | p{3cm} | }
+\hline \multicolumn{1}{|r|}{\textbf{ID}} & \multicolumn{1}{l|}{\textbf{Name}} & \multicolumn{1}{l|}{\textbf{URI or media-type}} & \multicolumn{1}{l|}{\textbf{Ancestors}} \\ \hline
+\endhead
+
+0 & error & http://vocab.lappsgrid.org/ns/error &  \\ \hline
+1 & ok & http://vocab.lappsgrid.org/ns/ok &  \\ \hline
+2 & meta & http://vocab.lappsgrid.org/ns/meta &  \\ \hline
+3 & text & text/plain &  \\ \hline
+4 & xml & application/xml &  \\ \hline
+5 & string-list & text/plain;separator=space &  \\ \hline
+512 & one-per-line & text/plain;separator=newline & text \\ \hline
+513 & tsv & text/plain;separator=tab & text \\ \hline
+514 & csv & text/plain;separator=comma & text \\ \hline
+1024 & document & http://vocab.lappsgrid.org/Document &  \\ \hline
+1025 & gate & application/xml;schema=gate & xml, document \\ \hline
+1026 & uima & application/xml;schema=uima & xml, document \\ \hline
+1027 & stanford & text/plain;schema=stanford & one-per-line, document \\ \hline
+1028 & opennlp & text/plain;schema=opennlp & one-per-line, document \\ \hline
+1029 & graf & application/xml;schema=graf & xml, document \\ \hline
+1030 & ptb & text/plain;schema=ptb & document \\ \hline
+1031 & json & application/json & document \\ \hline
+1032 & json-ld & application/ld+json & json \\ \hline
+1034 & lapps & application/ld+json;schema=lapps & json-ld \\ \hline
+2048 & annotation & http://vocab.lappsgrid.org/Annotation &  \\ \hline
+2049 & chunk & http://vocab.lappsgrid.org/Chunk & annotation \\ \hline
+2050 & paragraph & http://vocab.lappsgrid.org/Paragraph & chunk \\ \hline
+2051 & sentence & http://vocab.lappsgrid.org/Sentence & chunk \\ \hline
+2052 & token & http://vocab.lappsgrid.org/Token & chunk \\ \hline
+2053 & pos & http://vocab.lappsgrid.org/Token\#pos & annotation \\ \hline
+2054 & coref & http://vocab.lappsgrid.org/NamedEntity\#matches & annotation \\ \hline
+2055 & ne & http://vocab.lappsgrid.org/NamedEntity & annotation \\ \hline
+2056 & person & http://vocab.lappsgrid.org/Person & ne \\ \hline
+2057 & location & http://vocab.lappsgrid.org/Location & ne \\ \hline
+2058 & date & http://vocab.lappsgrid.org/Date & ne \\ \hline
+2059 & organization & http://vocab.lappsgrid.org/Organization & ne \\ \hline
+2060 & nchunk & http://vocab.lappsgrid.org/NounChunk & chunk \\ \hline
+2061 & vchunk & http://vocab.lappsgrid.org/VerbChunk & chunk \\ \hline
+2062 & lemma & http://vocab.lappsgrid.org/Token\#lemma & annotation \\ \hline
+2063 & lookup & http://vocab.lappsgrid.org/Lookup & annotation \\ \hline
+2064 & matches & http://vocab.lappsgrid.org/NamedEntity\#matches & annotation \\ \hline
+3072 & query & http://vocab.lappsgrid.org/ns/query &  \\ \hline
+3073 & get & http://vocab.lappsgrid.org/ns/query/get &  \\ \hline
+3074 & index & http://vocab.lappsgrid.org/ns/query/index &  \\ \hline
+3075 & list & http://vocab.lappsgrid.org/ns/query/list &  \\ \hline
+3076 & lucene & http://vocab.lappsgrid.org/ns/query/lucene & query \\ \hline
+3077 & sql & http://vocab.lappsgrid.org/ns/query/sql & query \\ \hline
+3078 & sparql & http://vocab.lappsgrid.org/ns/query/sparql & query \\ \hline
+3079 & regex & http://vocab.lappsgrid.org/ns/query/regex & query \\ \hline
+3080 & composite & http://vocab.lappsgrid.org/ns/query/composite &  \\ \hline
+524287 & license & http://vocab.lappsgrid.org/ns/license &  \\ \hline
+524288 & public-domain & http://vocab.lappsgrid.org/ns/license/public-domain & license \\ \hline
+524289 & open-source & http://vocab.lappsgrid.org/ns/license/open-source & license \\ \hline
+524290 & apache2 & http://vocab.lappsgrid.org/ns/license/apache-2.0 & open-source \\ \hline
+524291 & gpl & http://vocab.lappsgrid.org/ns/license/gpl & open-source \\ \hline
+524292 & lgpl & http://vocab.lappsgrid.org/ns/license/lgpl & open-source \\ \hline
+524293 & bsd & http://vocab.lappsgrid.org/ns/licanse/bsd & open-source \\ \hline
+524294 & eclipse & http://vocab.lappsgrid.org/ns/license/eclipse & open-source \\ \hline
+524295 & no-commercial & http://vocab.lappsgrid.org/ns/license/non-commercial & license \\ \hline
+524296 & restricted & http://vocab.lappsgrid.org/ns/license/restricted & license \\ \hline
+524297 & gpl2 & http://vocab.lappsgrid.org/ns/license/gpl-2.0 & gpl \\ \hline
+524298 & gpl3 & http://vocab.lappsgrid.org/ns/license/gpl-3.0 & gpl \\ \hline
+524299 & lgpl21 & http://vocab.lappsgrid.org/ns/license/lgpl-2.1 & lgpl \\ \hline
+524300 & lgpl3 & http://vocab.lappsgrid.org/ns/license/lgpl-3.0 & lgpl \\ \hline
+524301 & bsd2 & http://vocab.lappsgrid.org/ns/license/bsd-2-clause & bsd \\ \hline
+524302 & bsd3 & http://vocab.lappsgrid.org/ns/license/bsd-3-clause & bsd \\ \hline
+524303 & mit & http://vocab.lappsgrid.org/ns/license/mit & open-source \\ \hline
+525311 & usage & http://vocab.lappsgrid.org/ns/allow &  \\ \hline
+525312 & research & http://vocab.lappsgrid.org/ns/allow/research & usage \\ \hline
+525313 & commercial & http://vocab.lappsgrid.org/ns/allow/commercial & usage \\ \hline
+525314 & education & http://vocab.lappsgrid.org/ns/allow/education & usage \\ \hline
+525315 & non-profit & http://vocab.lappsgrid.org/ns/allow/non-profit & usage \\ \hline
+525316 & personal & http://vocab.lappsgrid.org/ns/allow/personal & usage \\ \hline
+525317 & any & http://vocab.lappsgrid.org/ns/allow/any & education, research, commercial, non-profit, personal \\ \hline
+\end{longtable}

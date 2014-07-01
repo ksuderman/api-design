@@ -1,0 +1,196 @@
+\documentclass{article}
+\usepackage{times}
+\usepackage{xspace}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage{url}
+\usepackage{longtable}
+
+\newcommand{\lapps}{LAPPS\xspace}
+\newcommand{\data}{\emph{Data}\xspace}
+\newcommand{\source}{\emph{DataSource}\xspace}
+\newcommand{\service}{\emph{WebService}\xspace}
+\newcommand{\vocab}[1]{\url{http://vocab.lappsgrid.org/#1}}
+\newcommand{\ns}[1]{\url{http://vocab.lappsgrid.org/ns/#1}}
+
+\renewcommand{\tt}[1]{\texttt{#1}}
+
+\lstnewenvironment{groovy}[2]
+  {\singlespacing\lstset{language=java, label=#1, caption=#2, captionpos=b, tabsize=3}}
+  {}
+
+\newenvironment{listing}{
+\begin{itemize}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{itemize}}
+
+\newenvironment{enum}{
+\begin{enumerate}
+  \setlength{\itemsep}{1pt}
+  \setlength{\parskip}{0pt}
+  \setlength{\parsep}{0pt}
+}{\end{enumerate}}
+
+
+\begin{document}
+
+\title{Design of the Language Application Grid}
+\author{Keith Suderman\\
+Department of Computer Science\\
+Vassar College\\
+Poughkeepsie, New York\\
+\texttt{suderman@cs.vassar.edu}}
+\date{\today}
+\maketitle
+
+\begin{abstract}
+The Language Application (LAPPS) Grid project
+is establishing a
+framework that enables language service discovery, composition, and reuse and promotes sustainability, manageability, usability, and interoperability of natural language Processing (NLP) components. It is based on the {\it service-oriented architecture} (SOA), a more recent, web-oriented version of the  ``pipeline" architecture that has long been used in NLP for sequencing loosely-coupled linguistic analyses. 
+The LAPPS Grid provides access to basic NLP processing tools and resources and enables pipelining such tools to create custom NLP applications, as well as
+composite services such as question answering and machine translation together with language resources such as mono- and multi-lingual corpora and lexicons that support NLP. 
+The transformative aspect of the LAPPS Grid is that it orchestrates  access to and deployment of language resources and processing functions available from servers around the globe and enables users to add their own language resources, services, and even service grids to satisfy their particular needs.
+\end{abstract}
+
+\section{Introduction}
+
+This paper describes the basic architecture and design of the \lapps Grid API (Application Programming Interface). The \lapps Grid uses the Service Grid\footnote{\url{http://servicegrid.net}} software for user authentication, authorization, service registration and service invocation. As such the \lapps API simply defines interfaces that web services must implement to be considered \lapps compliant.
+
+Unlike other language service grids (Language Grid\footnote{\url{http://langrid.org}}, Panacea\footnote{\url{http://www.panacea-lr.eu}}), which define separate interfaces for each service type (translators, tokenizers, named entity recognizers, etc.) the \lapps API only defines two very simple interfaces for web services; \source and \service. The information required to invoke the underlying Language Resource (LR) is encoded as a JSON-LD\footnote{\url{http://json-ld.org}} document that is transmitted to the service.
+
+Currently, the \lapps Grid only supports SOAP\cite{soap} web services. Future versions of the \lapps grid will also support REST based web services.
+
+
+\section{LAPPS Core API}
+
+The core of the \lapps  API consists of one concrete class, the \data  object, and two interfaces; \source and \service.  The \data object is the main artifact exchanged by \lapps services and \source and \service are interfaces to be implemented by providers wishing to contribute services to the \lapps grid.  
+
+\subsection{Data Objects}
+All \lapps service communicate with each other by exchanging \data objects.  A \data object consists of a \emph{discriminator} value and a \emph{payload}.  The \data object is defined as:\footnote{All code snippets provided are in Groovy, which is (almost) a superset of the Java language.  See http://groovy.codehaus.org for an introduction to the Groovy language.}
+
+\begin{groovy}{data}{org.lappsgrid.api.Data}
+	class Data {
+		String discriminator
+		String payload
+	}
+\end{groovy}
+
+The \emph{discriminator} value can be either a URI or a media-type conforming to the ABNF grammar in section 4.2 of RFC 6838\cite{rfc6838}. See Section~\ref{sec:media} for a discussion of recognized \lapps media types.
+
+The \emph{payload} is a UTF-8 string and the \emph{discriminator} determines how the string should be interpreted.  Typically the \emph{payload} will contain a UTF-8 string representation of some document format, i.e. GATE XML or UIMA CAS.  A complete list of currently supported \emph{discriminator} types can be found in Section~\ref{sub:discriminators}. 
+
+%The \tt{org.lappsgrid.core.DataFactory} class defines factory methods for creating the mostly commonly used \data object types.
+
+\subsection{DataSource}
+
+A \source is a web service that provides data to other processing services in the form of \data objects. A \source may return any type of \data object depending on the nature of the data managed by the \source.
+
+\begin{groovy}{groovy:source}{org.lappsgrid.api.DataSource}
+	interface DataSource {
+		Data getMetadata()
+		int size()
+		Data list()
+		Data list(int start, int end)
+		Data get(String key)
+		Data query(Data input)
+	}
+\end{groovy}
+
+\subsubsection{getMetadata()}
+
+The \tt{getMetadata()} method must return JSON-LD payload with the discriminator set to \ns{meta}. The metadata returned must include:
+\begin{listing}
+	\item name
+	\item version
+	\item input requirements (if any),
+	\item output (if any)
+\end{listing}
+Section~\ref{sec:metadata} contains a complete description of the JSON-LD format for \lapps metadata.
+
+\subsubsection{size()}
+The \tt{size()} method returns an integer value representing the number of documents managed by the \source service.
+
+\subsubsection{list()\\list(int start, int end)}
+
+Describe the \tt{list} methods.
+
+\subsubsection{get(String key)}
+
+Describe the \tt{get} method.
+
+\subsubsection{query(Data input)}
+
+Describe the \tt{query} method.
+
+This method is reserved for future use.  It is anticipated that \source services will be able to return documents based on a Lucene\footnote{\url{http://lucene.apache.org}} and/or Solr\footnote{\url{http://lucene.apache.org/solr}} query.  Other query languages may also be supported as well.
+
+% WebService
+
+\subsection{WebService}\label{sub:WebService}
+
+Infomation on processing services.
+
+\begin{groovy}{service}{org.lappsgrid.api.WebService}
+	interface WebService {
+		Data getMetadata()
+		Data execute(Data input)
+		Data configure(Data input)
+	}
+\end{groovy}
+
+\subsubsection{getMetadata()}
+
+Describe the \tt{getMetadata()} method.
+
+
+\section{Media Types}\label{sec:media}
+
+Discuss media types including the following:
+\begin{enum}
+	\item \tt{text/plain}
+	\item \tt{text/plain; separator=(space|tab|newline|comma)}
+	\item \tt{text/plain; schema=<name>}
+	\item \tt{application/xml}
+	\item \tt{application/xml; schema=<name>}
+\end{enum}
+
+Other things to discuss:
+\begin{enum}
+	\item Use of custom parameters
+	\begin{enum}
+		\item \tt{separator} for \tt{text/plain}
+		\item \tt{schema} for \tt{text/plain} and \tt{application/xml}
+	\end{enum}
+	\item \tt{charset} parameter ignored for all media types.
+\end{enum}
+
+\section{JSON-LD}\label{sec:json-ld}
+
+Most of the time the content of the payload will be a JSON-LD document in the LAPPS Interchange Format (LIF).
+\subsection{\lapps Interchange Format (LIF)}\label{sec:lif}
+
+Infomation on JSON structures.
+
+\subsection{Service Metadata}\label{sec:metadata}
+
+Describe the JSON-LD metadata returned by the \tt{getMetadata()} method.
+
+\section{Discriminators}\label{sec:discriminators}
+
+\subsection{Media Types}
+\input{media-types}
+
+\subsection{License Types}\label{sub:licenses}
+\input{license-types.tex}
+
+\subsection{All Discriminators}\label{sub:discriminators}
+\input{discriminators.tex}
+
+
+\bibliographystyle{plain}
+\bibliography{design}
+
+\end{document}

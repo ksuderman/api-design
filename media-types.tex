@@ -1,0 +1,20 @@
+\begin{longtable}{| r | l | l | p{3cm} | }
+\hline \multicolumn{1}{|r|}{\textbf{ID}} & \multicolumn{1}{l|}{\textbf{Name}} & \multicolumn{1}{l|}{\textbf{URI or media-type}} & \multicolumn{1}{l|}{\textbf{Ancestors}} \\ \hline
+\endhead
+
+3 & text & text/plain &  \\ \hline
+4 & xml & application/xml &  \\ \hline
+5 & string-list & text/plain;separator=space &  \\ \hline
+512 & one-per-line & text/plain;separator=newline & text \\ \hline
+513 & tsv & text/plain;separator=tab & text \\ \hline
+514 & csv & text/plain;separator=comma & text \\ \hline
+1025 & gate & application/xml;schema=gate & xml, document \\ \hline
+1026 & uima & application/xml;schema=uima & xml, document \\ \hline
+1027 & stanford & text/plain;schema=stanford & one-per-line, document \\ \hline
+1028 & opennlp & text/plain;schema=opennlp & one-per-line, document \\ \hline
+1029 & graf & application/xml;schema=graf & xml, document \\ \hline
+1030 & ptb & text/plain;schema=ptb & document \\ \hline
+1031 & json & application/json & document \\ \hline
+1032 & json-ld & application/ld+json & json \\ \hline
+1034 & lapps & application/ld+json;schema=lapps & json-ld \\ \hline
+\end{longtable}
