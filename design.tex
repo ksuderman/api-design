@@ -8,11 +8,18 @@
 \usepackage{longtable}
 
 \newcommand{\lapps}{LAPPS\xspace}
-\newcommand{\data}{\emph{Data}\xspace}
-\newcommand{\source}{\emph{DataSource}\xspace}
-\newcommand{\service}{\emph{WebService}\xspace}
+\newcommand{\data}{\texttt{Data}\xspace}
+\newcommand{\source}{\texttt{DataSource}\xspace}
+\newcommand{\service}{\texttt{WebService}\xspace}
 \newcommand{\vocab}[1]{\url{http://vocab.lappsgrid.org/#1}}
 \newcommand{\ns}[1]{\url{http://vocab.lappsgrid.org/ns/#1}}
+
+\newcommand{\definedterm}[1]{\textbf{\textit{#1}}\xspace}
+\newcommand{\must}{\definedterm{must}}
+\newcommand{\mustnot}{\definedterm{must not}}
+\newcommand{\should}{\definedterm{should}}
+\newcommand{\may}{\definedterm{may}}
+
 
 \renewcommand{\tt}[1]{\texttt{#1}}
 
@@ -55,18 +62,22 @@ composite services such as question answering and machine translation together w
 The transformative aspect of the LAPPS Grid is that it orchestrates  access to and deployment of language resources and processing functions available from servers around the globe and enables users to add their own language resources, services, and even service grids to satisfy their particular needs.
 \end{abstract}
 
+\section{Defined Terms}
+The key words "\must", "\mustnot", "\should", and,  "\may", in this document are to be interpreted as described in
+      RFC 2119\cite{rfc2119}.
+
 \section{Introduction}
 
-This paper describes the basic architecture and design of the \lapps Grid API (Application Programming Interface). The \lapps Grid uses the Service Grid\footnote{\url{http://servicegrid.net}} software for user authentication, authorization, service registration and service invocation. As such the \lapps API simply defines interfaces that web services must implement to be considered \lapps compliant.
+This paper describes the basic architecture and design of the \lapps Grid API (Application Programming Interface). The \lapps Grid uses the Service Grid\footnote{\url{http://servicegrid.net}} software for user authentication, authorization, service registration and service invocation. As such the \lapps API simply defines interfaces that web services \must implement to be considered \lapps compliant.
 
 Unlike other language service grids (Language Grid\footnote{\url{http://langrid.org}}, Panacea\footnote{\url{http://www.panacea-lr.eu}}), which define separate interfaces for each service type (translators, tokenizers, named entity recognizers, etc.) the \lapps API only defines two very simple interfaces for web services; \source and \service. The information required to invoke the underlying Language Resource (LR) is encoded as a JSON-LD\footnote{\url{http://json-ld.org}} document that is transmitted to the service.
 
 Currently, the \lapps Grid only supports SOAP\cite{soap} web services. Future versions of the \lapps grid will also support REST based web services.
 
 
-\section{LAPPS Core API}
+\section{org.lappsgrid.api}
 
-The core of the \lapps  API consists of one concrete class, the \data  object, and two interfaces; \source and \service.  The \data object is the main artifact exchanged by \lapps services and \source and \service are interfaces to be implemented by providers wishing to contribute services to the \lapps grid.  
+The core  \lapps  API consists of one concrete class, the \data  object, and two interfaces; \source and \service.  The \data object is the main artifact exchanged by \lapps services and \source and \service are interfaces to be implemented by providers wishing to contribute services to the \lapps grid.  
 
 \subsection{Data Objects}
 All \lapps service communicate with each other by exchanging \data objects.  A \data object consists of a \emph{discriminator} value and a \emph{payload}.  The \data object is defined as:\footnote{All code snippets provided are in Groovy, which is (almost) a superset of the Java language.  See http://groovy.codehaus.org for an introduction to the Groovy language.}
@@ -103,7 +114,7 @@ A \source is a web service that provides data to other processing services in th
 
 The \tt{getMetadata()} method must return JSON-LD payload with the discriminator set to \ns{meta}. The metadata returned must include:
 \begin{listing}
-	\item name
+	\item service name
 	\item version
 	\item input requirements (if any),
 	\item output (if any)
