@@ -22,6 +22,7 @@
 \newcommand{\should}{\definedterm{should}}
 \newcommand{\shouldnot}{\definedterm{should not}}
 \newcommand{\may}{\definedterm{may}}
+\newcommand{\maynot}{\definedterm{may not}}
 
 
 \renewcommand{\tt}[1]{\texttt{#1}}
@@ -70,7 +71,7 @@ The transformative aspect of the LAPPS Grid is that it orchestrates  access to a
 
 \section{Introduction}
 
-This paper describes the basic architecture and design of the \lapps Grid API (Application Programming Interface). The \lapps Grid uses the Service Grid\footnote{\url{http://servicegrid.net}} software for user authentication, authorization, service registration and service invocation. As such the \lapps API simply defines interfaces that web services \must implement to be considered \lapps compliant.
+This paper describes the basic architecture and design of the \lapps Grid API (Application Programming Interface). The \lapps Grid uses the Service Grid\footnote{\url{http://servicegrid.net}} software for user authentication, authorization, service registration and service invocation. As such the \lapps API simply defines interfaces that web services \may implement to be considered \lapps compliant.
 
 Unlike other language service grids (Language Grid\footnote{\url{http://langrid.org}}, Panacea\footnote{\url{http://www.panacea-lr.eu}}), which define separate interfaces for each service type (translators, tokenizers, named entity recognizers, etc.) the \lapps API only defines two very simple interfaces for web services; \source and \service. The information required to invoke the underlying Language Resource (LR) is encoded as a JSON-LD\footnote{\url{http://json-ld.org}} document that is transmitted to the service.
 
@@ -79,16 +80,10 @@ Currently, the \lapps Grid only supports SOAP\cite{soap} web services. Future ve
 
 % Defined Terms
 
-\section{Defined Terms}
-The key words "\must", "\mustnot", "\should", "\shouldnot", and,  "\may", in this document are to be interpreted as described in
-      RFC 2119\cite{rfc2119}.
 
-\subsection{Terminology}
-\begin{description}
-\item[discriminator] a URI or media-type. Discriminators are discussed in Section~\ref{sec:discriminators}.
-\item[error object] a \data object with the \discriminator set to \ns{error}
-\item[data object type] the value of the \data object's \discriminator. Sometimes referred to as the \emph{"object's type"} or \emph{data type} when the meaning is not ambiguous.
-\end{description}
+\section{Key words}
+The key words "\must", "\mustnot", "\should", "\shouldnot",  "\may", and "\maynot" in this document are to be interpreted as described in
+      RFC 2119\cite{rfc2119}.
 
 
 % API
@@ -101,7 +96,7 @@ The core  \lapps  API consists of one concrete class, the \data  object, and two
 
 \subsection{Errors}
 
-In the event of an error while servicing a request a \source or \service \should return a \data object with the \discriminator set to \ns{error} and a UTF-8 string congaing an error message as the \payload. Services \shouldnot rely on SOAP's fault handling mechanism by throwing exceptions, either directly or indirectly. For security reasons production services \shouldnot include a stack trace in the error message.
+In the event of an error while servicing a request \lapps services \should return a \data object with the \discriminator set to \ns{error} and a UTF-8 string congaing an error message as the \payload. Services \shouldnot rely on SOAP's fault handling mechanism by throwing exceptions, either directly or indirectly. For security reasons production services \shouldnot include a stack trace in the error message.
 
 % Data
 
@@ -119,11 +114,18 @@ The \discriminator value can either be a URI or a media-type conforming to the A
 
 The \payload \should be a UTF-8 string and the \discriminator determines how the string should be interpreted.  Typically the \payload will contain a string representation of some document format, for example GATE XML or UIMA CAS.  A complete list of currently supported \discriminator types can be found in Section~\ref{sub:discriminators}. 
 
+The following terms are used throughout the remainder of this document.
+
+\begin{description}
+\item[error object] a \data object with the \discriminator set to \ns{error}
+\item[data object type] the value of the \data object's \discriminator. Sometimes referred to as the \emph{"object's type"} or \emph{"data type"} when the meaning is not ambiguous.
+\end{description}
+
 % DataSource
 
 \subsection{DataSource}
 
-A \source is a web service that provides data to other processing services as \data objects. A \source can return any type of \data object provided the object's \discriminator is set to an appropriate value.  For example, textual \source{}s will typically return \data objects with the \discriminator set to \tt{text/plain} or \tt{application/xml}. The custom attribute \emph{schema}  \may used to further describe the data format, either by referencing an actual schema document or by using a unique identifier agreed upon by service providers; for example; \tt{text/plain; schema=ptb}.
+A \source is a web service that provides data to other processing services as \data objects. A \source can return any type of \data object provided the \data object's \discriminator is set to an appropriate value.  For example, textual \source{}s will typically return \data objects with the \discriminator set to \tt{text/plain} or \tt{application/xml}. The custom attribute \emph{schema}  \may used to further describe the data format, either by referencing an actual schema document or by using a unique identifier agreed upon by service providers; for example; \tt{text/plain; schema=ptb}.
 
 \begin{groovy}{groovy:source}{org.lappsgrid.api.DataSource}
 	interface DataSource {
