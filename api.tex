@@ -1,0 +1,151 @@
+% API
+
+\section{LAPPS Application Programming Interface (API)}
+
+The core  \lapps  API consists of one concrete class, the \data  object, and two interfaces; \source and \service.  The \data object is the main artifact exchanged by \lapps services and \source and \service are interfaces to be implemented by providers wishing to contribute services to the \lapps grid.  
+
+%------------------------------------------
+% Errors
+
+\subsection{Errors}
+
+In the event of an error while servicing a request \lapps services \should return a \data object with the \discriminator set to \ns{error} and a UTF-8 string containing an error message as the \payload. Services \shouldnot rely on SOAP's fault handling mechanism by throwing exceptions, either directly or indirectly. Instead all exceptions \should be caught by the service and an appropriate error message returned to the caller. For security reasons production services \shouldnot include a stack trace in the error message.
+
+%------------------------------------------
+% Data
+
+\subsection{Data Objects}
+All \lapps services communicate with each other by exchanging \data objects.  A \data object consists of a \discriminator value and a \payload.  The \data object is defined as:\footnote{All code snippets provided are in Groovy, which is (almost) a superset of the Java language.  See http://groovy.codehaus.org for an introduction to the Groovy language.}
+
+\begin{groovy}{data}{org.lappsgrid.api.Data}
+	class Data {
+		String discriminator
+		String payload
+	}
+\end{groovy}
+
+The \discriminator value can either be a URI or a media-type conforming to the ABNF grammar in section 4.2 of RFC 6838\cite{rfc6838}. See Section~\ref{sec:media} for a discussion of recognized \lapps media types.
+
+The \payload \should be a UTF-8 string and the \discriminator determines how the string is to be interpreted.  Typically the \payload will contain a string representation of some document format, for example GATE XML or UIMA CAS.  A complete list of currently supported \discriminator types can be found in Section~\ref{sub:discriminators}. 
+
+\subsubsection{More terms}
+The following terms are used throughout the remainder of this document.
+
+\begin{description}
+\item[error object] a \data object with the \discriminator set to \ns{error}
+\item[data object type] the value of the \data object's \discriminator. Sometimes referred to as the \emph{"object's type"} or \emph{"data type"} when the meaning is not ambiguous.
+\end{description}
+
+%------------------------------------------
+% DataSource
+
+\subsection{DataSource}
+
+\todo{This section should be cleaned up and clarified.}
+
+A \source is a web service that provides data to other processing services as \data objects. A \source can return any type of \data object provided the \data object's \discriminator is set to an appropriate value.  For example, textual \source{}s will typically return \data objects with the \discriminator set to \tt{text/plain} or \tt{application/xml}. The media type parameter \emph{profile}  \may be used to further describe the data format, either by referencing an actual schema document or by using a unique identifier agreed upon by service providers; for example; \tt{text/plain; schema=\ns{1.0/media\#ptb}}.
+
+\begin{groovy}{groovy:source}{org.lappsgrid.api.DataSource}
+	interface DataSource {
+		Data getMetadata()
+		int size()
+		Data list()
+		Data list(int start, int end)
+		Data get(String key)
+		Data query(Data input)
+	}
+\end{groovy}
+
+% getMetadata
+\subsubsection{Data getMetadata()}
+
+The \tt{getMetadata()} method \should return a JSON-LD \payload with the \discriminator set to \ns{meta}. The metadata returned \should include at least the following information:
+\begin{listing}
+	\item name
+	\item version
+	\item description
+\end{listing}
+Section~\ref{sec:metadata} contains a complete description of the JSON-LD format for \lapps metadata.
+
+% size
+\subsubsection{int size()}
+The \tt{size()} method \must return an integer value representing the number of documents managed by the \source service or a negative integer in the case of an error.  
+
+%list
+\subsubsection{Data list()\\Data list(int start, int end)}
+
+The \tt{list} methods return a list of the key values that can be used to fetch artifacts from the \source.  A \source \may return an error if the number of artifacts managed by the \source is extremely large.  In this case the \source \should return an error object with the \payload set to \emph{"Index too large."}.
+
+The \tt{list(int,int)} method  returns the range of key values $[start..end)$.  They keys in the returned list \must be separated  whitespace characters with the the appropriate \discriminator value from Table~\ref{table:list}.
+
+\begin{table}[h!]
+\noindent\begin{tabular}{ l p{7.5cm} }
+\bold{Media type} & \bold{Description} \\
+text/plain; separator=space & a list of UTF-8 strings separated by a single white space character (0x20) \\
+text/plain; separator=newline & a list of UTF-8 string separated by a single newline (carridge return) character (0x0D) \\
+text/plain; separator=tab & tab (0x09) separated values \\
+text/plain; separator=comma  & comma (0x2C) separated values \\
+\end{tabular}
+\caption{Allowable media types for key lists}
+\label{table:list}
+\end{table}
+
+Applications \must be able to split the returned list into an array of keys on the specified separator without doing any other text processing.
+
+% get
+\subsubsection{Data get(String key)}
+
+The \tt{get(String)} method returns a single artifact from a \source.  The key passed to the \source \must be one of the keys returned by either of the \tt{list} methods. The \discriminator \must be set to one of the following:
+\begin{listing}
+\item a recognized media type listed in Section~\ref{sec:media},
+\item a user defined media type defined as described in Section~\ref{sec:custom-media}, or
+\item a URI referencing a user defined media type.
+\end{listing}
+
+%query
+\subsubsection{Data query(Data input)}
+
+This method is reserved for future use.  It is anticipated that \source services will be able to return documents based on a Lucene\footnote{\url{http://lucene.apache.org}} and/or Solr\footnote{\url{http://lucene.apache.org/solr}} query.  Other query languages may also be supported as well.
+
+
+%------------------------------------------
+% WebService
+
+\subsection{WebService}\label{sub:WebService}
+
+A \service is any service that transforms its input, either by adding or removing annotations or metadata.
+
+\begin{groovy}{service}{org.lappsgrid.api.WebService}
+	interface WebService {
+		Data getMetadata()
+		Data execute(Data input)
+		Data configure(Data input)
+	}
+\end{groovy}
+
+% getMetadata
+\subsubsection{Data getMetadata()}
+
+The \tt{getMetadata()} method \should return a JSON-LD \payload with the \discriminator set to \ns{meta}. The metadata returned \should include at least the following information:
+\begin{listing}
+	\item name
+	\item version
+	\item description
+	\item input requirements (if any),
+	\item output (if any)
+\end{listing}
+Section~\ref{sec:metadata} contains a complete description of the JSON-LD format for \lapps metadata.
+
+%execute
+\subsubsection{Data execute(Data input)}
+
+\todo{This section needs to be expanded.}
+
+Executes the language resource managed by this service.  
+
+If the input \data object's \discriminator is \ns{error} then the \service \must return the input object unchanged.  If the input \data object's \discriminator is not set to one of the specified in the service's input requirements the service \should return an error object with the payload that starts with the string "Invalid input type."
+
+%configure
+\subsubsection{configure(Data input)}
+
+This method is reserved for future use.
