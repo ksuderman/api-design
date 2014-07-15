@@ -6,6 +6,7 @@
 \usepackage{setspace}
 \usepackage{url}
 \usepackage{longtable}
+\usepackage{textcomp}
 
 \newcommand{\lapps}{LAPPS\xspace}
 \newcommand{\data}{\texttt{Data}\xspace}
@@ -13,8 +14,12 @@
 \newcommand{\service}{\texttt{WebService}\xspace}
 \newcommand{\discriminator}{\textit{discriminator}\xspace}
 \newcommand{\payload}{\textit{payload}\xspace}
+% Formatting URL using vocab.lappsgrid.org
 \newcommand{\vocab}[1]{\url{http://vocab.lappsgrid.org/#1}}
-\newcommand{\ns}[1]{\url{http://vocab.lappsgrid.org/ns/#1}}
+% Formatting URL using ns.lappsgrid.org
+\newcommand{\ns}[1]{\url{http://ns.lappsgrid.org/1.0/#1}}
+% Formatting URL using ns.lappsgrid.org with a fragment identifier
+\newcommand{\nsf}[2]{\url{http://ns.lappsgrid.org/1.0/#1###2}}
 
 \newcommand{\definedterm}[1]{\textbf{\textit{#1}}\xspace}
 \newcommand{\must}{\definedterm{must}}
@@ -55,7 +60,7 @@
 
 \begin{document}
 
-\title{Design of the Language Application Grid}
+\title{The Language Application Grid API}
 \author{Keith Suderman\\
 Department of Computer Science\\
 Vassar College\\
@@ -82,7 +87,7 @@ The key words "\must", "\mustnot", "\should", "\shouldnot",  "\may", and \mbox{"
 
 \section{Introduction}
 
-This paper describes the basic architecture and design of the \lapps Grid API (Application Programming Interface). The \lapps Grid uses the Service Grid\footnote{\url{http://servicegrid.net}} software for user authentication, authorization, service registration and service invocation. As such the \lapps API simply defines interfaces that web services \may implement to be considered \lapps compliant.
+This paper describes the basic architecture and design of the \lapps Grid Application Programming Interface (API). The \lapps Grid uses the Service Grid\footnote{\url{http://servicegrid.net}} software for user authentication, authorization, service registration and service invocation. As such the \lapps API simply defines interfaces that web services \may implement to be considered \lapps compliant.
 
 Unlike other language service grids (Language Grid\footnote{\url{http://langrid.org}}, Panacea\footnote{\url{http://www.panacea-lr.eu}}), which define separate interfaces for each service type (translators, tokenizers, named entity recognizers, etc.) the \lapps API only defines two very simple interfaces for web services; \source and \service. The information required to invoke the underlying Language Resource (LR) is encoded as a JSON-LD\footnote{\url{http://json-ld.org}} document that is transmitted to the service.
 

@@ -4,7 +4,7 @@
 %*****************
 \section{Media Types}\label{sec:media}
 
-\lapps services describe media types using the ABNF grammar  defined in Sectio~4.2 of RFC~6838\cite{rfc6838}. However, not all media types defined using this grammar are valid \lapps media types.  In particular, the only media type/subtype combinations currently recognized by \lapps services are:
+The \lapps API describes media types using the ABNF grammar  defined in Section~4.2 of RFC~6838\cite{rfc6838}. However, not all media types defined using this grammar are valid \lapps media types.  In particular, the only media type/subtype combinations currently recognized by \lapps services are:
 \begin{listing}
 \item \tt{text/plain},
 \item \tt{application/xml},
@@ -20,33 +20,14 @@ The \lapps API also defines two custom parameters that can be included with the 
 \item[separator] The separator character used between entries in a list of data. Possible values are \it{space} (0x20), \it{tab} (0x09), \it{newline} (0x0D), and \it{comma} (0x2C). This parameter only applies to the \tt{text/plain} media type.
 \item[profile] Describes the format of structured data.  The parameter value \may point to an actual schema document, or may simply use a recognized term agreed upon by service providers.  The currently recognized terms are:
 \begin{enum}
-	\item \tt{text/plain; profile=http://vocab.lappsgrid.org/ns/media\#ptb} for the lisp-like bracketing used by the Penn TreeBank.
-	\item \tt{application/xml; profile=http://vocab.lappsgrid.org/ns/media\#gate} for GATE XML documents.
-	\item \tt{application/xml; profile=http://vocab.lappsgrid.org/ns/media\#uima} for UIMA CAS documents.
-	\item \tt{application/xml; profile=http://vocab.lappsgrid.org/ns/media\#graf} for GrAF standoff annotation files.
-	\item \tt{application/ld+json; profile=http://vocab.lappsgrid.org/ns/media\#lapps} for JSON-LD documents conforming to the \lapps Interchange Format.
-	\item \tt{application/ld+json; profile=http://vocab.lappsgrid.org/ns/media\#lapps-meta} for JSON-LD documents contains \lapps service metadata.
+	\item \tt{text/plain; profile=\nsf{media}{ptb}} for the lisp-like bracketing used by the Penn TreeBank.
+	\item \tt{application/xml; profile=\nsf{media}{gate}} for GATE XML documents.
+	\item \tt{application/xml; profile=\nsf{media}{uima}} for UIMA CAS documents.
+	\item \tt{application/xml; profile=\nsf{media}{graf}} for GrAF standoff annotation files.
+	\item \tt{application/ld+json; profile=\nsf{media}{lapps}} for JSON-LD documents conforming to the \lapps Interchange Format.
+	\item \tt{application/ld+json; profile=\nsf{media}{lapps-meta}} for JSON-LD documents contains \lapps service metadata.
 \end{enum}
 \end{description}
 
-\todo{Mention that that charset parameter \must be ignored."}
-
-Discuss media types including the following:
-\begin{enum}
-	\item \tt{text/plain}
-	\item \tt{text/plain; separator=(space|tab|newline|comma)}
-	\item \tt{text/plain; profile=<name>}
-	\item \tt{application/xml}
-	\item \tt{application/xml; profile=<name>}
-\end{enum}
-
-Other things to discuss:
-\begin{enum}
-	\item Use of custom parameters
-	\begin{enum}
-		\item \tt{separator} for \tt{text/plain}
-		\item \tt{profile} for \tt{text/plain} and \tt{application/xml}
-	\end{enum}
-	\item \tt{charset} parameter ignored for all media types.
-\end{enum}
+While IETF media types permits other parameter types to be used these are the only parameter types that \lapps services \must recognize.  In particular the \emph{charset} parameter on media types \must be ignored as the \lapps API provides an alternative mechanism for specifying the character encoding of the \payload.
 

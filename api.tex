@@ -1,6 +1,6 @@
 % API
 
-\section{LAPPS Application Programming Interface (API)}
+\section{LAPPS Application Programming Interface}
 
 The core  \lapps  API consists of one concrete class, the \data  object, and two interfaces; \source and \service.  The \data object is the main artifact exchanged by \lapps services and \source and \service are interfaces to be implemented by providers wishing to contribute services to the \lapps grid.  
 
@@ -43,7 +43,7 @@ The following terms are used throughout the remainder of this document.
 
 \todo{This section should be cleaned up and clarified.}
 
-A \source is a web service that provides data to other processing services as \data objects. A \source can return any type of \data object provided the \data object's \discriminator is set to an appropriate value.  For example, textual \source{}s will typically return \data objects with the \discriminator set to \tt{text/plain} or \tt{application/xml}. The media type parameter \emph{profile}  \may be used to further describe the data format, either by referencing an actual schema document or by using a unique identifier agreed upon by service providers; for example; \tt{text/plain; schema=\ns{1.0/media\#ptb}}.
+A \source is a web service that provides data to other processing services as \data objects. A \source can return any type of \data object provided the \data object's \discriminator is set to an appropriate value.  For example, textual \source{}s will typically return \data objects with the \discriminator set to \tt{text/plain} or \tt{application/xml}. The media type parameter \emph{profile}  \may be used to further describe the data format, either by referencing an actual schema document or by using a unique identifier agreed upon by service providers; for example; \tt{text/plain; profile=http://www.cis.upenn.edu/~treebank}.
 
 \begin{groovy}{groovy:source}{org.lappsgrid.api.DataSource}
 	interface DataSource {
@@ -59,7 +59,7 @@ A \source is a web service that provides data to other processing services as \d
 % getMetadata
 \subsubsection{Data getMetadata()}
 
-The \tt{getMetadata()} method \should return a JSON-LD \payload with the \discriminator set to \ns{meta}. The metadata returned \should include at least the following information:
+The \tt{getMetadata()} method \must return a JSON-LD \payload. The \discriminator \should be set to \ns{meta}. The metadata returned \should include at least the following information:
 \begin{listing}
 	\item name
 	\item version
@@ -81,16 +81,16 @@ The \tt{list(int,int)} method  returns the range of key values $[start..end)$.  
 \begin{table}[h!]
 \noindent\begin{tabular}{ l p{7.5cm} }
 \bold{Media type} & \bold{Description} \\
-text/plain; separator=space & a list of UTF-8 strings separated by a single white space character (0x20) \\
-text/plain; separator=newline & a list of UTF-8 string separated by a single newline (carridge return) character (0x0D) \\
-text/plain; separator=tab & tab (0x09) separated values \\
-text/plain; separator=comma  & comma (0x2C) separated values \\
+text/plain; separator=space & a list of UTF-8 strings separated by a single space character (0x20) \\
+text/plain; separator=newline & a list of UTF-8 strings separated by a single newline (carridge return) character (0x0D) \\
+text/plain; separator=tab & a list of UTF-8 strings separated by a single tab character (0x09)\\
+text/plain; separator=comma  & a list of UTF-8 strings separated by a single comma (0x2C)\\
 \end{tabular}
 \caption{Allowable media types for key lists}
 \label{table:list}
 \end{table}
 
-Applications \must be able to split the returned list into an array of keys on the specified separator without doing any other text processing.
+Applications \must be able to split the returned list on the specified separator without doing any other text processing.
 
 % get
 \subsubsection{Data get(String key)}
@@ -126,7 +126,7 @@ A \service is any service that transforms its input, either by adding or removin
 % getMetadata
 \subsubsection{Data getMetadata()}
 
-The \tt{getMetadata()} method \should return a JSON-LD \payload with the \discriminator set to \ns{meta}. The metadata returned \should include at least the following information:
+The \tt{getMetadata()} method \must return a JSON-LD \payload. The \discriminator \should be set to \ns{meta}. The metadata returned \should include at least the following information:
 \begin{listing}
 	\item name
 	\item version
